@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_attachment_search" model="ir.ui.view">
+        <field name="name">ir.attachment.search</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="base.view_attachment_search"/>
+        <field name="arch" type="xml">
+            <filter name="owner" position="before">
+                <filter name="model" string="Model" domain="[]" context="{'group_by':'res_model'}"/>
+            </filter>
+            <filter name="url_filter" position="before">
+                <filter name="model_res_partner" string="Partners" domain="[('res_model','=','res.partner')]" context="[]"/>
+                <filter name="model_account_invoice" string="Invoices" domain="[('res_model','=','account.invoice')]" context="[]"/>
+                <filter name="model_sale_order" string="Sale orders" domain="[('res_model','=','sale.order')]" context="[]"/>
+                <separator/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="ir_action_download_attachment" model="ir.actions.server">
+        <field name="name">Download</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="base.model_ir_attachment"/>
+        <field name="state">code</field>
+        <field name="code">
+            if records:
+            action = records.action_download_attachment()
+        </field>
+        <field name="binding_model_id" ref="base.model_ir_attachment"/>
+    </record>
+
+    <menuitem action="base.action_attachment" id="base.menu_action_attachment" parent="base.menu_administration"/>
+</odoo>
