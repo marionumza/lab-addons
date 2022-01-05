@@ -106,9 +106,6 @@ class StockPicking(models.Model):
                 if self.env.user.company_id.sudo().sh_stock_bm_is_add_product:
                     search_product = self.env["product.product"].search(
                         domain, limit=1)
-                    search_package = self.env['stock.package_level'].search(
-                        domain, limit=1
-                    )
                     if search_product:
                         stock_move_vals = {
                             "name": search_product.name,
@@ -139,7 +136,7 @@ class StockPicking(models.Model):
                     else:
                         if self.env.user.company_id.sudo().sh_stock_bm_is_notify_on_fail:
                             message = _(
-                                CODE_SOUND_FAIL + 'Scanned Internal Reference/Barcode not exist in any product/package!')
+                                CODE_SOUND_FAIL + 'Scanned Internal Reference/Barcode not exist in any product!')
                             self.env['bus.bus'].sendone(
                                 (self._cr.dbname, 'res.partner',
                                  self.env.user.partner_id.id),
