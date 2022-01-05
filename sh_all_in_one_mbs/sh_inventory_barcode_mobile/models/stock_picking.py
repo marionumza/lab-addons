@@ -191,7 +191,3 @@ class StockPicking(models.Model):
                     {'type': 'simple_notification', 'title': _('Failed'), 'message': message, 'sticky': False, 'warning': True})
 
             return
-
-    def write(self, vals):
-        res = super().write(vals)
-        return res
