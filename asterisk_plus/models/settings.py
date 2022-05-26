@@ -1,6 +1,7 @@
 # ©️ OdooPBX by Odooist, Odoo Proprietary License v1.0, 2020
 import inspect
 import logging
+import sys
 from odoo import fields, models, api, release, _
 from odoo.exceptions import ValidationError
 from odoo.tools import ormcache
@@ -13,7 +14,12 @@ FORMAT_TYPE = 'e164'
 def debug(rec, message):
     caller_module = inspect.stack()[1][3]
     if rec.env['asterisk_plus.settings'].sudo().get_param('debug_mode'):
-        print('++++++ {}: {}'.format(caller_module, message))
+        logger.info('++++++ {}: {}'.format(caller_module, message))
+        rec.env['asterisk_plus.debug'].sudo().create({
+            'model': getattr(rec, '_name', str(rec)),
+            'message': message,
+        })
+
 
 
 class Settings(models.Model):
@@ -107,6 +113,9 @@ class Settings(models.Model):
     auto_reload_channels = fields.Boolean(
         default=True,
         help=_('Automatically refresh active channels view'))
+    auto_create_partners = fields.Boolean(
+        default=False,
+        help=_('Automatically create partner record on calls from uknown numbers.'))
 
     @api.model
     def _get_name(self):

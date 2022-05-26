@@ -4,7 +4,7 @@
     'name': 'Asterisk Plus',
     'version': '1.0',
     'author': 'Odooist',
-    'price': 0.0,
+    'price': 350,
     'currency': 'EUR',
     'maintainer': 'Odooist',
     'support': 'odooist@gmail.com',
@@ -48,10 +48,11 @@
         'views/tag.xml',
         'views/conf.xml',
         'views/security.xml',
+        'views/debug.xml',
         # Cron
         'views/ir_cron.xml',
         # Wizards
-        'wizard/add_note.xml',
+        'wizard/set_notes.xml',
         'wizard/call.xml',
         # Reports
         'reports/reports.xml',
