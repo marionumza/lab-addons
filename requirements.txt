@@ -1,1 +1,6 @@
-python-dateutil
+humanize
+lameenc
+phonenumbers
+pyyaml
+salt-pepper
+SpeechRecognition
