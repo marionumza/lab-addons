@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def strip_number(number):
     """Strip number formating"""
-    pattern = r'[\s+()-]'
+    pattern = r'[\s()-]'
     return re.sub(pattern, '', number)
 
 
@@ -126,7 +126,8 @@ class Partner(models.Model):
         # 2-nd case: Many partners, no parent company / many companies
         elif len(parents) == 0 and len(found) > 1:
             logger.warning('MANY PARTNERS FOR NUMBER %s', number)
-            return
+            debug(self, 'RETURN FIRST PARTNER FOR NUMBER {}'.format(number))
+            return found[0]
         # 3-rd case: many partners, many companies
         elif len(parents) > 1 and len(found) > 1:
             logger.warning(
@@ -138,10 +139,10 @@ class Partner(models.Model):
                     lambda r: r.parent_id.id in [k.id for k in parents])) == 1:
             debug(self, 'ONE PARTNER FROM ONE PARENT FOUND')
             return found.filtered(
-                lambda r: r.parent_id.id in [k.id for k in parents])[0]
+                lambda r: r.parent_id in [k for k in parents])[0]
         # 5-rd case: many partners same parent company
         elif len(parents) == 1 and len(found) > 1 and len(found.filtered(
-                lambda r: r.parent_id.id in [k.id for k in parents])) > 1:
+                lambda r: r.parent_id in [k for k in parents])) > 1:
             debug(self, 'MANY PARTNERS SAME PARENT COMPANY {}'.format(number))
             return parents[0]
         # 6-rd case: Nothing found
@@ -152,24 +153,7 @@ class Partner(models.Model):
         # Called from AMI events.fields.
         # Get country code of Asterisk server account 
         # or main company country if Asterisk account country is not set.
-        country_code = self.env.user.country_id.code or self.env.ref(
-            'base.main_company').sudo().country_id.code
-        try:
-            phone_nbr = phonenumbers.parse(number, country_code)
-            if not phonenumbers.is_possible_number(phone_nbr):
-                debug(self, 'PHONE NUMBER {} NOT POSSIBLE'.format(number))
-            elif not phonenumbers.is_valid_number(phone_nbr):
-                debug(self, 'PHONE NUMBER {} NOT VALID'.format(number))
-            # We have a parsed number, let check what format to return.
-            number = phonenumbers.format_number(
-                phone_nbr, phonenumbers.PhoneNumberFormat.E164)
-            debug(self, 'E164 FORMATTED NUMBER: {}'.format(number))
-        except phonenumberutil.NumberParseException:
-            debug(self, 'PHONE NUMBER {} PARSE ERROR'.format(number))
-        except Exception:
-            logger.exception('FORMAT NUMBER ERROR:')
-        finally:            
-            return self.search_by_number(number)
+        return self.get_partner_by_number(number)['id']
 
     def _get_country_code(self):
         partner = self
@@ -187,8 +171,9 @@ class Partner(models.Model):
             return self.env.user.company_id.country_id.code
 
     @api.model
-    def _format_number(self, number, country_code=None,
-                       format_type='e164'):
+    def _format_number(self, number, country_code=None, format_type='e164'):
+        """Return number in requested format_type
+        """
         debug(self, 'FORMAT_NUMBER {} COUNTRY {} FORMAT {}'.format(number, country_code, format_type))
         # Strip formatting if present
         number = strip_number(number)
@@ -200,8 +185,6 @@ class Partner(models.Model):
             # Get country code for requesting account
             country_code = self.env.user.partner_id._get_country_code()
             debug(self, 'GOT COUNTRY CODE {} FROM ENV USER'.format(country_code))
-        elif not country_code:
-            debug(self, 'COULD NOT GET COUNTRY CODE')
         if country_code is False:
             # False -> None
             country_code = None
@@ -209,8 +192,6 @@ class Partner(models.Model):
             phone_nbr = phonenumbers.parse(number, country_code)
             if not phonenumbers.is_possible_number(phone_nbr):
                 debug(self, 'PHONE NUMBER {} NOT POSSIBLE'.format(number))
-            elif not phonenumbers.is_valid_number(phone_nbr):
-                debug(self, 'PHONE NUMBER {} NOT VALID'.format(number))
             # We have a parsed number, let check what format to return.
             elif format_type == 'out_of_country':
                 # For out of country format we must get the Asterisk
