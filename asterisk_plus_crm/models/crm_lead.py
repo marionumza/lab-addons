@@ -12,12 +12,20 @@ logger = logging.getLogger(__name__)
 class Lead(models.Model):
     _inherit = 'crm.lead'
 
-    asterisk_calls_count = fields.Integer(compute='_get_asterisk_calls_count',
-                                          string=_('Calls'))
-    phone_normalized = fields.Char(compute='_get_phone_normalized',
-                                   index=True, store=True)
-    mobile_normalized = fields.Char(compute='_get_phone_normalized',
-                                    index=True, store=True)
+    asterisk_calls_count = fields.Integer(
+        compute='_get_asterisk_calls_count',
+        string=_('Calls'),
+    )
+    phone_normalized = fields.Char(
+        compute_sudo='_get_phone_normalized',
+        index=True,
+        store=True,
+    )
+    mobile_normalized = fields.Char(
+        compute_sudo='_get_phone_normalized',
+        index=True,
+        store=True,
+    )
 
     def write(self, values):
         res = super(Lead, self).write(values)
@@ -32,7 +40,7 @@ class Lead(models.Model):
         return res
 
     @api.model
-    def create(self, vals):        
+    def create(self, vals):
         try:
             if self.env.context.get('call_id'):
                 call = self.env['asterisk_plus.call'].browse(
@@ -50,30 +58,24 @@ class Lead(models.Model):
             self.pool.clear_caches()
         return res
 
-    @api.depends('phone', 'mobile', 'country_id', 'partner_id', 'partner_id.phone', 'partner_id.mobile')
+    @api.depends('phone', 'mobile', 'country_id', 'partner_id',
+                 'partner_id.phone', 'partner_id.mobile')
     def _get_phone_normalized(self):
-        for rec in self:            
-            if release.version_info[0] >= 14:
-                # Odoo > 14.0
-                if rec.phone:
-                    rec.phone_normalized = rec.normalize_phone(rec.phone)
-                if rec.mobile:
-                    rec.mobile_normalized = rec.normalize_phone(rec.mobile)
-            else:
-                # Old Odoo versions
-                if rec.partner_id:
-                    # We have partner set, take phones from him.
-                    if rec.partner_address_phone:
-                        rec.phone_normalized = rec.normalize_phone(
-                            rec.partner_address_phone)
-                    if rec.mobile:
-                        rec.mobile_normalized = rec.normalize_phone(rec.mobile)
-                else:
-                    # No partner set takes phones from lead.
-                    if rec.phone:
-                        rec.phone_normalized = rec.normalize_phone(rec.phone)
-                    if rec.mobile:
-                        rec.mobile_normalized = rec.normalize_phone(rec.mobile)
+        for rec in self:
+            phone_value = rec.phone
+            mobile_value = rec.mobile
+            if not release.version_info[0] >= 14 and rec.partner_id:
+                # Odoo < 14.0 and we have partner set, take phone from him.
+                phone_value = rec.partner_address_phone
+                phone_value = rec.partner_address_mobile
+            if phone_value:
+                normalized_phone = rec.normalize_phone(phone_value)
+                if normalized_phone != rec.phone_normalized:
+                    rec.update({'phone_normalized': normalized_phone})
+            if mobile_value:
+                normalized_mobile = rec.normalize_phone(mobile_value)
+                if normalized_mobile != rec.mobile_normalized:
+                    rec.update({'mobile_normalized': normalized_mobile})
 
     def _get_country_code(self):
         if self and self.country_id:
@@ -121,10 +123,12 @@ class Lead(models.Model):
         # Get last open lead
         found = self.env['crm.lead'].search(domain, order='id desc')
         if len(found) == 1:
-            debug(self, 'FOUND LEAD {} BY NUMBER {}'.format(found[0].id, number))
+            debug(self, 'FOUND LEAD {} BY NUMBER {}'.format(
+                found[0].id, number))
             return found[0]
         elif len(found) > 1:
-            logger.warning('[ASTCALLS] MULTIPLE LEADS FOUND BY NUMBER %s', number)
+            logger.warning(
+                '[ASTCALLS] MULTIPLE LEADS FOUND BY NUMBER %s', number)
             return found[0]
         else:
             debug(self, 'LEAD BY NUMBER {} NOT FOUND'.format(number))
@@ -164,7 +168,8 @@ class Lead(models.Model):
         elif not country_code:
             # Get country code for requesting account
             country_code = self.env.user.partner_id._get_country_code()
-            logger.debug(self, 'LEAD GOT COUNTRY CODE %s FROM ENV USER', country_code)
+            logger.debug(
+                self, 'LEAD GOT COUNTRY CODE %s FROM ENV USER', country_code)
         elif not country_code:
             logger.debug(self, 'LEAD COULD NOT GET COUNTRY CODE')
         if country_code is False:
@@ -173,17 +178,21 @@ class Lead(models.Model):
         try:
             phone_nbr = phonenumbers.parse(number, country_code)
             if not phonenumbers.is_possible_number(phone_nbr):
-                logger.debug(self, 'LEAD PHONE NUMBER {} NOT POSSIBLE'.format(number))
+                logger.debug(
+                    self, 'LEAD PHONE NUMBER {} NOT POSSIBLE'.format(number))
             elif not phonenumbers.is_valid_number(phone_nbr):
-                logger.debug(self, 'LEAD PHONE NUMBER {} NOT VALID'.format(number))
+                logger.debug(
+                    self, 'LEAD PHONE NUMBER {} NOT VALID'.format(number))
             elif format_type == 'e164':
                 number = phonenumbers.format_number(
                     phone_nbr, phonenumbers.PhoneNumberFormat.E164)
-                logger.debug(self, 'LEAD E164 FORMATTED NUMBER: {}'.format(number))
+                logger.debug(
+                    self, 'LEAD E164 FORMATTED NUMBER: {}'.format(number))
             else:
                 logger.error('LEAD WRONG FORMATTING PASSED: %s', format_type)
         except phonenumberutil.NumberParseException:
-            logger.debug(self, 'LEAD PHONE NUMBER {} PARSE ERROR'.format(number))
+            logger.debug(
+                self, 'LEAD PHONE NUMBER {} PARSE ERROR'.format(number))
         except Exception:
             logger.exception('LEAD FORMAT NUMBER ERROR:')
         finally:
