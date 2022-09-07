@@ -1,0 +1,105 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sh_dynamic_list_view
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.1alpha1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-21 06:09+0000\n"
+"PO-Revision-Date: 2021-09-21 06:09+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sh_dynamic_list_view
+#. openerp-web
+#: code:addons/sh_dynamic_list_view/static/src/xml/listview.xml:0
+#, python-format
+msgid "Apply"
+msgstr "申请"
+
+#. module: sh_dynamic_list_view
+#. openerp-web
+#: code:addons/sh_dynamic_list_view/static/src/xml/listview.xml:0
+#, python-format
+msgid "Close"
+msgstr "关闭"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__sh_invisible
+msgid "Column Invisible"
+msgstr "列看不见"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__create_uid
+msgid "Created by"
+msgstr "由...制作"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__create_date
+msgid "Created on"
+msgstr "创建于"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__display_name
+msgid "Display Name"
+msgstr "显示名称"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__sh_attrs_label
+msgid "Field Label"
+msgstr "现场标签"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__sh_attrs_name
+msgid "Field Name"
+msgstr "字段名称"
+
+#. module: sh_dynamic_list_view
+#: model:res.groups,name:sh_dynamic_list_view.group_global_custom_field_list
+msgid "Global Custom Field (List View)"
+msgstr "全局自定义字段（列表视图）"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__id
+msgid "ID"
+msgstr "ID"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field____last_update
+msgid "Last Modified on"
+msgstr "最后修改了"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__write_uid
+msgid "Last Updated by"
+msgstr "最后更新"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__write_date
+msgid "Last Updated on"
+msgstr "上次更新了"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__sh_attrs_model
+msgid "Model"
+msgstr "模型"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model,name:sh_dynamic_list_view.model_sh_model_field
+msgid "Model Field"
+msgstr "模型领域"
+
+#. module: sh_dynamic_list_view
+#: model:ir.model.fields,field_description:sh_dynamic_list_view.field_sh_model_field__sh_sequence
+msgid "Sequence"
+msgstr "序列"
+
+#. module: sh_dynamic_list_view
+#: model:res.groups,comment:sh_dynamic_list_view.group_global_custom_field_list
+msgid "This user will be able to hide/show fields in list for any Object"
+msgstr "此用户将能够隐藏/显示任何对象列表中的字段"

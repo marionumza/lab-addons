@@ -1,0 +1,8 @@
+<odoo noupdate="1">
+   
+    <record id="group_global_custom_field_list" model="res.groups">
+	        <field name="name">Global Custom Field (List View)</field>
+ 	        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+	        <field name="comment">This user will be able to hide/show fields in list for any Object</field>
+	    </record>
+</odoo>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+	<t t-extend="ListView.buttons">
+		<t t-jquery=".o_list_button_add" t-operation="before">
+			<t t-if="widget.can_hide_show_custom_field"> 
+				<div class="btn-group o_dropdown">
+					<button type="button" class="btn btn-primary sh_field_list">
+			            <span class="fa fa-cog"/>
+			        </button>
+			        <div class="field_list"></div>
+			    </div>
+			</t> 
+		</t>
+	</t>
+	<t t-extend="BillsListView.buttons">
+		<t t-jquery=".o_list_button_add" t-operation="before">
+			<t t-if="widget.can_hide_show_custom_field"> 
+				<div class="btn-group o_dropdown">
+					<button type="button" class="btn btn-primary sh_field_list">
+			            <span class="fa fa-cog"/>
+			        </button>
+			        <div class="field_list"></div>
+			    </div>
+			</t> 
+		</t>
+	</t>
+	<t t-extend="ExpensesListView.buttons">
+		<t t-jquery=".o_list_button_add" t-operation="before">
+			<t t-if="widget.can_hide_show_custom_field"> 
+				<div class="btn-group o_dropdown">
+					<button type="button" class="btn btn-primary sh_field_list">
+			            <span class="fa fa-cog"/>
+			        </button>
+			        <div class="field_list"></div>
+			    </div>
+			</t> 
+		</t>
+	</t>
+	<t t-extend="StockInventoryReport.Buttons">
+		<t t-jquery=".o_list_button_add" t-operation="before">
+			<t t-if="widget.can_hide_show_custom_field"> 
+				<div class="btn-group o_dropdown">
+					<button type="button" class="btn btn-primary sh_field_list">
+			            <span class="fa fa-cog"/>
+			        </button>
+			        <div class="field_list"></div>
+			    </div>
+			</t> 
+		</t>
+	</t>
+	
+	<t t-name="SelectFieldWidget">
+	   
+	     <ul class="field_ul dropdown-menu oe_dropdown_menu" role="menu" id="sortable">
+	     	<li>
+	     		<button class="btn btn-primary apply_button" data-toggle="dropdown" aria-expanded="false">
+			        Apply
+			    </button>
+			    <button class="btn btn-secondary close_button" data-toggle="dropdown" aria-expanded="false">
+			        Close
+			    </button>
+			 
+	     	</li>
+	        <li class="field_li" t-foreach="field_list" t-as="field">
+	        		<label class="switch">
+					  <input type="checkbox" t-att-checked="field.column_invisible ? undefiend : 'checked'" t-att-data-name="field.name"/>
+					  <span class="slider round"></span>
+					</label>
+                  <input type="text" t-att-data-name="field.name" t-att-value="field.label" class="sh_toggle_input"></input>
+                  <span class="fa fa-arrows sh_arrow"/>
+                  
+	        </li>
+        	
+	    </ul>
+	</t>
+
+
+</templates>
